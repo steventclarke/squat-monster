@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Button } from '../../components/Button';
 import { Panel } from '../../components/Panel';
-import { Colors, Spacing, Typography } from '../../constants/theme';
+import { Colors, Spacing, Typography, Radius } from '../../constants/theme';
 import { DEFAULT_PLATE_DIAMETER_MM, LOAD_UNITS } from '@squat-monster/shared';
 
 export default function UploadInputs() {
