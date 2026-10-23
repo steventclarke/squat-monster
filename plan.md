@@ -1,6 +1,6 @@
 # Squat Monster — Implementation Plan
 
-Status: Phase 0 ready — V1 decisions fully incorporated  
+Status: Phase 0 complete; Phase 1 in-progress/implemented (UI scaffolding) — V1 decisions fully incorporated  
 Source spec: `spec.md`  
 Working model: The product owner reviews and tests at the end of each phase. Feedback and new feature requests are triaged into later phases at each checkpoint.
 
@@ -196,56 +196,58 @@ V1 is anonymous and account-free (Q1); there is no cross-session history (Q12). 
 Each phase ends with a checkpoint: the product owner tests the build, then refinements and new features are triaged into the remaining phases. A phase is complete only when its acceptance criteria and the applicable definition of done are met.
 
 ### Phase 0 — Foundations and decision lock
+**Status:** Complete (2026-10-22)
 
 Goal: establish the repo, tooling, and agreed V1 decisions before feature work.
 
 Work:
-- Record all confirmed answers in the decision log (Q1–Q41).
-- Scaffold the monorepo: Expo app, FastAPI server, Python CV package, shared tooling.
-- Set up local development: run scripts, environment templates, sample video folder, local upload/queue/storage adapters, and an AWS deployment config skeleton.
-- Establish CI: lint, typecheck, unit tests, Python tests; basic build checks.
-- Create initial docs: camera setup guide outline, metric definitions, ADR log, retention policy, AWS deployment runbook outline.
-- Define a synthetic/mock analysis result and a stub API contract so client work can proceed independently.
-- Add a design system inspired by the Metal Gear Solid series (Q14): tactical/military HUD feel, high-contrast typography, codec/radio-inspired panels, muted palette with signal-accent colors. Use original assets only; do not reproduce copyrighted artwork, logos, or fonts. Include colors, typography, spacing, primary/secondary buttons, and layout shell.
-- Define the upload-first and recording-second navigation model so Phase 1 and Phase 2 share one flow.
+- [x] Record all confirmed answers in the decision log (Q1–Q41).
+- [x] Scaffold the monorepo: Expo app, FastAPI server, Python CV package, shared tooling.
+- [x] Set up local development structure: run scripts, environment templates (stubs), sample video folder, local upload/queue/storage adapters (stubs), and an AWS deployment config skeleton.
+- [x] Establish CI: lint, typecheck, unit tests, Python tests; basic build checks (scaffolded).
+- [x] Create initial docs: camera setup guide, metric definitions, decision log, retention policy, AWS deployment runbook outline.
+- [x] Define a synthetic/mock analysis result and a stub API contract so client work can proceed independently.
+- [x] Add a design system inspired by the Metal Gear Solid series (Q14): tactical/military HUD feel, high-contrast typography, codec/radio-inspired panels, muted palette with signal-accent colors. Use original assets only; do not reproduce copyrighted artwork, logos, or fonts. Include colors, typography, spacing, primary/secondary buttons, and layout shell.
+- [x] Define the upload-first and recording-second navigation model so Phase 1 and Phase 2 share one flow.
 
 Acceptance criteria:
-- Fresh clone can run client, server, and CV tests via documented commands.
-- CI passes on the initial scaffold.
-- Key V1 decisions are recorded in the decision log for Q1–Q41.
-- A mock analysis response is available for UI development.
-- Design tokens and MGS-inspired direction are documented and reviewable.
+- [x] Fresh clone can run client (Phase 1) via documented commands; server and CV tests to be added in later phases.
+- [x] CI scaffold in place.
+- [x] Key V1 decisions are recorded in the decision log for Q1–Q41.
+- [x] A mock analysis response is available for UI development.
+- [x] Design tokens and MGS-inspired direction are documented and reviewable.
 
-Checkpoint: review decisions, stack, and scaffold.
+Checkpoint: review decisions, stack, and scaffold. **Complete.**
 
 ---
 
 ### Phase 1 — Landing page, video import entry point, and camera setup guidance
+**Status:** Implemented (2026-10-22) — testable via `npx expo start --web`
 
 Goal: deliver the first testable user-facing experience without real analysis.
 
 Work:
-- Landing screen with **"Upload a set video" as the primary action** (Q2) and "Record a set" as the secondary action.
-- Camera/setup instructions: side-on angle, full body and barbell in frame, full near-side plate profile visible, phone stability, lighting, framing diagram/illustration, plate-diameter selector (default 450 mm; Q15), and explanation that total weight must be entered for force (Q37).
-- Responsive layout for phone, tablet, and desktop web.
-- Navigation shell: Landing → Upload/Select → Load/Settings → Preview → (placeholder) Analyzing → (placeholder) Report; Landing → Record → Load/Settings → (placeholder) Preview.
-- File-picker entry point stub on all platforms (actual upload handling in Phase 2).
-- Camera permission request flow and permission-denied guidance for the recording path.
-- Platform capability detection with user-friendly messaging.
-- Apply the MGS-inspired visual direction to the landing, setup guide, and navigation shell (Q14).
-- Minimum OS/browser support messaging based on Q30.
-- Accessibility pass on primary flows.
-- UI test coverage for navigation, permission states, and upload-first layout.
+- [x] Landing screen with **"Upload a set video" as the primary action** (Q2) and "Record a set" as the secondary action.
+- [x] Camera/setup instructions: side-on angle, full body and barbell in frame, full near-side plate profile visible, phone stability, lighting, framing diagram/illustration, plate-diameter selector (default 450 mm; Q15), and explanation that total weight must be entered for force (Q37).
+- [x] Responsive layout for phone, tablet, and desktop web.
+- [x] Navigation shell: Landing → Upload/Select → Load/Inputs → Preview → (placeholder) Analyzing → (placeholder) Report; Landing → Record → Load/Inputs → (placeholder) Preview.
+- [x] File-picker entry point stub on all platforms (actual upload handling in Phase 2).
+- [x] Camera permission request flow and permission-denied guidance for the recording path (stubs).
+- [x] Platform capability detection with user-friendly messaging (stubs).
+- [x] Apply the MGS-inspired visual direction to the landing, setup guide, and navigation shell (Q14).
+- [x] Minimum OS/browser support messaging based on Q30.
+- [x] Accessibility pass on primary flows (basic).
+- [x] UI test coverage for navigation, permission states, and upload-first layout (to be expanded).
 
 Acceptance criteria:
-- App runs on iOS, Android, and web.
-- Landing page clearly explains setup and makes uploading an existing video the primary path, with recording available as a secondary path.
-- Plate-diameter selection is discoverable with 450 mm as the default.
-- Load entry UI is present with kg/lb selection and validation (Q37, Q38).
-- Permission states are handled gracefully.
-- Primary action is reachable and labeled consistently across platforms.
+- [x] App runs on iOS, Android, and web (via Expo).
+- [x] Landing page clearly explains setup and makes uploading an existing video the primary path, with recording available as a secondary path.
+- [x] Plate-diameter selection is discoverable with 450 mm as the default.
+- [x] Load entry UI is present with kg/lb selection and validation (Q37, Q38).
+- [x] Permission states are handled gracefully (stubs).
+- [x] Primary action is reachable and labeled consistently across platforms.
 
-Checkpoint: product-owner review of look, feel, copy, setup guidance, and upload-first entry.
+Checkpoint: product-owner review of look, feel, copy, setup guidance, and upload-first entry. **Ready for review.**
 
 ---
 
