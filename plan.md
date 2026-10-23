@@ -68,7 +68,10 @@ Confirmed V1 architecture:
 └──────────────────────────────────────────────┘
 ```
 
-Deployment target (Q32): AWS. Target services: S3 for video/overlay assets, ECS Fargate for the API and CV worker, SQS for the analysis queue, RDS Postgres for set/job metadata, CloudFront + S3 for the web/PWA build, CloudWatch for logs/metrics/alarms, and Secrets Manager for credentials. Infrastructure is provisioned with AWS CDK in TypeScript. Development uses local disk/SQLite and a local queue so the full stack can run without AWS.
+Deployment target (Q32): AWS.  
+- **Platform (shared, owned by `stevenclarke-infrastructure`):** Route 53 hosted zone for `stevenclarke.dev`, TLS certificates (wildcard for CloudFront in us-east-1, Squat Monster API wildcard in us-east-1), shared VPC/subnets, GitHub OIDC and deploy roles, SSM parameter contract, monitoring/budgets.  
+- **App-specific (owned by this repo):** EC2 backend for FastAPI API + CV worker (cost-optimized small instance), S3 for video/overlay assets, SQS for analysis queue, CloudFront for web/PWA, app secrets in Secrets Manager, DNS records for `squat-monster.stevenclarke.dev` and `api.squat-monster.stevenclarke.dev` (and preview variants) in the shared zone. Read shared values from SSM.  
+Infrastructure is provisioned with AWS CDK in TypeScript in this repo. Development uses local disk/SQLite and a local queue so the full stack can run without AWS.
 
 Why this direction:
 - Expo gives one codebase for iOS, Android, and web, with a path to native modules if camera performance requires it.
@@ -204,7 +207,7 @@ Work:
 - [x] Record all confirmed answers in the decision log (Q1–Q41).
 - [x] Scaffold the monorepo: Expo app, FastAPI server, Python CV package, shared tooling.
 - [x] Set up local development structure: run scripts, environment templates (stubs), sample video folder, local upload/queue/storage adapters (stubs).
-- [ ] Implement AWS infrastructure as code using AWS CDK in TypeScript (stacks for S3, CloudFront, ECS Fargate, SQS, RDS Postgres, CloudWatch, Secrets Manager). Add deployment config and CDK app skeleton.
+- [ ] **App-specific IaC (AWS CDK in TypeScript):** Create app CDK stacks for Squat Monster resources owned by this repo per infrastructure plan - EC2 backend (small instance for FastAPI API + CV worker), S3 for video/overlay assets, CloudFront distribution for web app if not fully delegated, SQS queue, app-specific secrets in Secrets Manager, and DNS records in the shared Route 53 zone. Read shared values (hosted zone ID, VPC/subnets, cert ARNs, deploy role ARNs) from SSM. Do **not** create shared platform resources (DNS zone, OIDC, shared VPC, certs) - those are owned by `stevenclarke-infrastructure`. Add CDK app skeleton under `infra/` or `cdk/`.
 - [x] Establish CI: lint, typecheck, unit tests, Python tests; basic build checks (scaffolded).
 - [x] Create initial docs: camera setup guide, metric definitions, decision log, retention policy, AWS deployment runbook outline.
 - [x] Define a synthetic/mock analysis result and a stub API contract so client work can proceed independently.
@@ -438,8 +441,9 @@ Checkpoint: product-owner review of the complete V1 experience.
 Goal: deploy V1 safely.
 
 Work:
-- Production deployment on AWS (Q32): CloudFront + S3 for the web/PWA, ECS Fargate for API and CV worker, SQS queue, RDS Postgres, S3 video/overlay storage, TLS, and Secrets Manager. Provision all resources with AWS CDK (TypeScript).
-- Environment configuration, secrets management, backups, and infrastructure-as-code (CDK stacks, environments, and CI/CD hooks).
+- Production deployment on AWS (Q32): App CDK provisions EC2 backend, S3 for video/overlay, SQS queue, CloudFront for web/PWA, app secrets in Secrets Manager, and DNS records in shared Route 53 zone. Platform CDK provisions shared zone/certs/VPC/OIDC/roles/SSM. Use EC2 (not ECS Fargate) per platform plan for Squat Monster backend.
+- Read platform values from SSM (hosted zone ID, VPC/subnets, cert ARNs, deploy role ARNs). Create app-specific DNS records via scoped permissions.
+- Environment configuration, secrets management, backups, and infrastructure-as-code (app CDK stacks under `infra/` or `cdk/`, environments preview/prod).
 - Monitoring/alerting via CloudWatch: error rates, job failures, processing latency, storage growth, retention job health.
 - Rate limiting, upload size limits, abuse protections, and cost controls.
 - Privacy/security review: transport security, signed URLs, 30-day source-video deletion and S3 lifecycle enforcement, set-record retention, and deletion verification.
@@ -639,7 +643,7 @@ Record confirmed answers and architectural decisions here as they are made.
 | 2026-10-22 | Rep-to-rep comparison within set; no previous-set comparison | Q29 | |
 | 2026-10-22 | Minimum OS/browser support | Q30 | **UNANSWERED**; default iOS 16+, Android 10+, latest two versions of Safari/Chrome/Firefox/Edge |
 | 2026-10-22 | Web/PWA primary release; native builds for TestFlight/internal testing | Q31 | No public App Store/Play Store requirement for V1 |
-| 2026-10-22 | AWS deployment: CloudFront/S3, ECS Fargate, SQS, RDS Postgres, CloudWatch, Secrets Manager | Q32 | Low-cost tier; IaC using AWS CDK (TypeScript) |
+| 2026-10-22 | AWS deployment split: platform shared in stevenclarke-infrastructure, app resources in this repo via CDK | Q32 | Low-cost tier; app uses EC2 for backend, reads SSM from platform; IaC in this repo (CDK/TS) |
 | 2026-10-22 | Backend server acceptable | Q33 | |
 | 2026-10-22 | Accessibility target: WCAG 2.1 AA where practical | Q34 | |
 | 2026-10-22 | English only in V1 | Q35 | Copy externalized for future localization |
