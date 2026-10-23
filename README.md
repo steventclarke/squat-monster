@@ -12,8 +12,9 @@ Squat Monster measures barbell speed, bar path, and force production from side-o
 ```bash
 cd app
 npm install
-npx expo start --web
+npx expo start --web --port 8082
 ```
+The app will run on http://localhost:8082 by default (configured to avoid port conflicts).
 2. Open the URL shown (usually http://localhost:8081). Navigate: Landing (Upload primary / Record secondary) → Upload/Select → Load Inputs (plate diameter + total weight kg/lb) → Preview → Mock Analyze → Mock Report.
 
 ## Project Structure
