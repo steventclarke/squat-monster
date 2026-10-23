@@ -68,7 +68,7 @@ Confirmed V1 architecture:
 └──────────────────────────────────────────────┘
 ```
 
-Deployment target (Q32): AWS. Target services: S3 for video/overlay assets, ECS Fargate for the API and CV worker, SQS for the analysis queue, RDS Postgres for set/job metadata, CloudFront + S3 for the web/PWA build, and CloudWatch for logs/metrics/alarms. Development uses local disk/SQLite and a local queue so the full stack can run without AWS.
+Deployment target (Q32): AWS. Target services: S3 for video/overlay assets, ECS Fargate for the API and CV worker, SQS for the analysis queue, RDS Postgres for set/job metadata, CloudFront + S3 for the web/PWA build, CloudWatch for logs/metrics/alarms, and Secrets Manager for credentials. Infrastructure is provisioned with AWS CDK in TypeScript. Development uses local disk/SQLite and a local queue so the full stack can run without AWS.
 
 Why this direction:
 - Expo gives one codebase for iOS, Android, and web, with a path to native modules if camera performance requires it.
@@ -203,7 +203,8 @@ Goal: establish the repo, tooling, and agreed V1 decisions before feature work.
 Work:
 - [x] Record all confirmed answers in the decision log (Q1–Q41).
 - [x] Scaffold the monorepo: Expo app, FastAPI server, Python CV package, shared tooling.
-- [x] Set up local development structure: run scripts, environment templates (stubs), sample video folder, local upload/queue/storage adapters (stubs), and an AWS deployment config skeleton.
+- [x] Set up local development structure: run scripts, environment templates (stubs), sample video folder, local upload/queue/storage adapters (stubs).
+- [ ] Implement AWS infrastructure as code using AWS CDK in TypeScript (stacks for S3, CloudFront, ECS Fargate, SQS, RDS Postgres, CloudWatch, Secrets Manager). Add deployment config and CDK app skeleton.
 - [x] Establish CI: lint, typecheck, unit tests, Python tests; basic build checks (scaffolded).
 - [x] Create initial docs: camera setup guide, metric definitions, decision log, retention policy, AWS deployment runbook outline.
 - [x] Define a synthetic/mock analysis result and a stub API contract so client work can proceed independently.
@@ -437,12 +438,12 @@ Checkpoint: product-owner review of the complete V1 experience.
 Goal: deploy V1 safely.
 
 Work:
-- Production deployment on AWS (Q32): CloudFront + S3 for the web/PWA, ECS Fargate for API and CV worker, SQS queue, RDS Postgres, S3 video/overlay storage, TLS, and Secrets Manager.
-- Environment configuration, secrets management, backups, and infrastructure-as-code.
+- Production deployment on AWS (Q32): CloudFront + S3 for the web/PWA, ECS Fargate for API and CV worker, SQS queue, RDS Postgres, S3 video/overlay storage, TLS, and Secrets Manager. Provision all resources with AWS CDK (TypeScript).
+- Environment configuration, secrets management, backups, and infrastructure-as-code (CDK stacks, environments, and CI/CD hooks).
 - Monitoring/alerting via CloudWatch: error rates, job failures, processing latency, storage growth, retention job health.
 - Rate limiting, upload size limits, abuse protections, and cost controls.
 - Privacy/security review: transport security, signed URLs, 30-day source-video deletion and S3 lifecycle enforcement, set-record retention, and deletion verification.
-- Release primary as web/PWA; produce native builds for TestFlight/internal Android testing. App Store/Play Store public release is not required for V1 (Q31).
+- Release primary as web/PWA; produce native builds for TestFlight/internal testing. App Store/Play Store public release is not required for V1 (Q31).
 - Release checklist, rollback plan, and runbook.
 - End-to-end test on the supported device/browser matrix with production-like settings; resolve Q30 before finalizing the matrix.
 - Final regression pass on the CV corpus and golden metrics.
@@ -638,7 +639,7 @@ Record confirmed answers and architectural decisions here as they are made.
 | 2026-10-22 | Rep-to-rep comparison within set; no previous-set comparison | Q29 | |
 | 2026-10-22 | Minimum OS/browser support | Q30 | **UNANSWERED**; default iOS 16+, Android 10+, latest two versions of Safari/Chrome/Firefox/Edge |
 | 2026-10-22 | Web/PWA primary release; native builds for TestFlight/internal testing | Q31 | No public App Store/Play Store requirement for V1 |
-| 2026-10-22 | AWS deployment: CloudFront/S3, ECS Fargate, SQS, RDS Postgres, CloudWatch | Q32 | Low-cost tier; IaC |
+| 2026-10-22 | AWS deployment: CloudFront/S3, ECS Fargate, SQS, RDS Postgres, CloudWatch, Secrets Manager | Q32 | Low-cost tier; IaC using AWS CDK (TypeScript) |
 | 2026-10-22 | Backend server acceptable | Q33 | |
 | 2026-10-22 | Accessibility target: WCAG 2.1 AA where practical | Q34 | |
 | 2026-10-22 | English only in V1 | Q35 | Copy externalized for future localization |
